@@ -3,4 +3,4 @@ def mk_b(text):
 
 
 def mk_u(text):
-    return f'<i>{text}</i>'
+    return f'<u>{text}</u>'
