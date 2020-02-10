@@ -14,7 +14,8 @@ def upload_coupons(call, bot):
 
     bot.send_message(
         call.message.chat.id,
-        'Отлично. Прикрепите изображение с талонами. Допустимые форматы: png, jpg'
+        '<b>Отлично. Прикрепите изображение с талонами. Допустимые форматы: png, jpg</b>',
+        parse_mode='HTML'
     )
 
 
@@ -28,8 +29,9 @@ def get_all_coupons(call, bot):
     else:
         bot.send_message(
             call.message.chat.id,
-            'Нет доступных талонов.\n'
-            'Загрузите новые талоны прикрепив файл.'
+            '<b>Нет доступных талонов.</b>\n'
+            'Загрузите новые талоны прикрепив файл.',
+            parse_mode='HTML'
         )
 
 
@@ -43,7 +45,8 @@ def create_png_and_send(call, coupon: QRCodeCoupon, bot):
 
     markup = InlineKeyboardMarkup()
     markup.row(InlineKeyboardButton(
-        'Пометить использованным', callback_data=f'mark_coupon:{coupon.coupon_number}')
+        'Пометить использованным', callback_data=f'mark_coupon:{coupon.coupon_number}',
+    )
     )
     markup.row(InlineKeyboardButton(
         'Пометить и получить еще талон', callback_data=f'mark_coupon:{coupon.coupon_number}:next')
@@ -51,7 +54,8 @@ def create_png_and_send(call, coupon: QRCodeCoupon, bot):
 
     bot.send_photo(
         call.message.chat.id, photo=png.getvalue(), reply_markup=markup,
-        caption=f'{coupon.coupon_number}\nДействителен до {coupon.expiry_date.strftime("%d/%m/%Y")}'
+        caption=f'{coupon.coupon_number}\nДействителен до <b>{coupon.expiry_date.strftime("%d/%m/%Y")}</b>\n',
+        parse_mode='HTML'
     )
 
 
@@ -61,10 +65,10 @@ def get_coupon(call, bot):
     if qr_coupon:
         create_png_and_send(call, qr_coupon, bot)
     else:
-        bot.send_message(call.message.chat.id, 'Нет доступных талонов')
+        bot.send_message(call.message.chat.id, '<b>Нет доступных талонов</b>\n', parse_mode='HTML')
         bot.send_message(
             call.message.chat.id, 'Выберите действие:',
-            reply_markup=start_menu_markup
+            reply_markup=start_menu_markup,
         )
 
 
@@ -76,8 +80,9 @@ def mark_coupon_used(call, coupon_number: str, bot, get_next=False):
 
     if already_used:
         bot.send_message(
-            call.message.chat.id, f'Талон {coupon_number}\nуже помечен использованным',
-            reply_markup=start_menu_markup if not get_next else None
+            call.message.chat.id, f'<b>Талон {coupon_number}\nуже помечен использованным</b>\n',
+            reply_markup=start_menu_markup if not get_next else None,
+            parse_mode='HTML'
         )
     else:
         mark_coupon(call.message.chat.id, coupon_number, mark=True)
@@ -86,16 +91,18 @@ def mark_coupon_used(call, coupon_number: str, bot, get_next=False):
             'Отменить пометку', callback_data=f'cancel_mark_coupon:{coupon_number}')
         )
         bot.send_message(
-            call.message.chat.id, f'Талон {coupon_number}\nотмечен использованным',
-            reply_markup=markup
+            call.message.chat.id, f'<b>Талон {coupon_number}\nотмечен использованным</b>\n',
+            reply_markup=markup,
+            parse_mode='HTML'
         )
 
         if get_next:
             get_coupon(call, bot)
         else:
             bot.send_message(
-                call.message.chat.id, 'Выберите действие:',
-                reply_markup=start_menu_markup
+                call.message.chat.id, '<b>Выберите действие:</b>',
+                reply_markup=start_menu_markup,
+                parse_mode='HTML'
             )
 
 
@@ -108,13 +115,15 @@ def cancel_mark_coupon_used(call, coupon_number: str, bot):
     if used:
         mark_coupon(call.message.chat.id, coupon_number, mark=False)
         bot.send_message(
-            call.message.chat.id, f'Талон {coupon_number}\nотмечен неиспользованным',
-            reply_markup=start_menu_markup
+            call.message.chat.id, f'<b>Талон {coupon_number}\nотмечен неиспользованным</b>\n',
+            reply_markup=start_menu_markup,
+            parse_mode='HTML'
         )
     else:
         bot.send_message(
-            call.message.chat.id, f'Невозможно отменить пометку,\nтак как талон {coupon_number}\nне использованный.',
-            reply_markup=start_menu_markup
+            call.message.chat.id, f'<b>Невозможно отменить пометку,\nтак как талон {coupon_number}\nне использованный.</b>\n',
+            reply_markup=start_menu_markup,
+            parse_mode='HTML'
         )
 
 

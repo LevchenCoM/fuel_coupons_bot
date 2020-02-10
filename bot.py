@@ -27,8 +27,8 @@ def check_access(fn):
 @bot.message_handler(commands=['start'])
 @check_access
 def start_message(message):
-    bot.send_message(message.chat.id, 'Привет, давай начнем! Выбери действие из списка',
-                     reply_markup=menus.start_menu_markup)
+    bot.send_message(message.chat.id, '<b>Привет, давай начнем! Выбери действие из списка</b>',
+                     reply_markup=menus.start_menu_markup, parse_mode='HTML')
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -52,7 +52,7 @@ def file(message):
             file_ = bot.get_file(message.document.file_id)
             downloaded_file = bot.download_file(file_.file_path)
 
-            bot.send_message(message.chat.id, 'Обрабатываю...')
+            bot.send_message(message.chat.id, '<b>Обрабатываю...</b>', parse_mode='HTML')
 
             original_image = Image.open(BytesIO(downloaded_file))
             qr_codes = get_all_qr_codes(original_image)
@@ -60,13 +60,13 @@ def file(message):
                 existed_coupons = save_coupons(original_image, message.chat.id, qr_codes)
                 if existed_coupons:
                     bot.send_message(message.chat.id, '\n'.join(
-                        [f'Талон с номером {c} уже существует.' for c in existed_coupons]
-                    ))
+                        [f'<b>Талон с номером {c} уже существует.</b>' for c in existed_coupons]
+                    ), parse_mode='HTML')
 
                 summary_message = get_summary_message(message.chat.id)
-                bot.send_message(message.chat.id, summary_message, reply_markup=start_menu_markup)
+                bot.send_message(message.chat.id, summary_message, reply_markup=start_menu_markup, parse_mode='HTML')
             else:
-                bot.send_message(message.chat.id, f'В файле не найдены талоны.')
+                bot.send_message(message.chat.id, f'<b>В файле не найдены талоны.</b>', parse_mode='HTML')
     else:
         pass
 
