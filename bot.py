@@ -10,6 +10,7 @@ from core.services.qr import get_all_qr_codes
 from PIL import Image
 
 from menus import mark_coupon_used, cancel_mark_coupon_used, start_menu_markup
+from utils import mk_b, mk_u
 
 bot = telebot.TeleBot(settings.BOT_TOKEN)
 
@@ -27,7 +28,7 @@ def check_access(fn):
 @bot.message_handler(commands=['start'])
 @check_access
 def start_message(message):
-    bot.send_message(message.chat.id, '<b>Привет, давай начнем! Выбери действие из списка</b>',
+    bot.send_message(message.chat.id, mk_b('Привет, давай начнем! Выбери действие из списка'),
                      reply_markup=menus.start_menu_markup, parse_mode='HTML')
 
 
@@ -52,7 +53,7 @@ def file(message):
             file_ = bot.get_file(message.document.file_id)
             downloaded_file = bot.download_file(file_.file_path)
 
-            bot.send_message(message.chat.id, '<b>Обрабатываю...</b>', parse_mode='HTML')
+            bot.send_message(message.chat.id, mk_b('Обрабатываю...'), parse_mode='HTML')
 
             original_image = Image.open(BytesIO(downloaded_file))
             qr_codes = get_all_qr_codes(original_image)
@@ -60,13 +61,13 @@ def file(message):
                 existed_coupons = save_coupons(original_image, message.chat.id, qr_codes)
                 if existed_coupons:
                     bot.send_message(message.chat.id, '\n'.join(
-                        [f'<b>Талон с номером {c} уже существует.</b>' for c in existed_coupons]
+                        [mk_b(f'Талон с номером {mk_u(c)} уже существует.') for c in existed_coupons]
                     ), parse_mode='HTML')
 
                 summary_message = get_summary_message(message.chat.id)
-                bot.send_message(message.chat.id, summary_message, reply_markup=start_menu_markup, parse_mode='HTML')
+                bot.send_message(message.chat.id, mk_b(summary_message), reply_markup=start_menu_markup, parse_mode='HTML')
             else:
-                bot.send_message(message.chat.id, f'<b>В файле не найдены талоны.</b>', parse_mode='HTML')
+                bot.send_message(message.chat.id, mk_b('В файле не найдены талоны.'), parse_mode='HTML')
     else:
         pass
 

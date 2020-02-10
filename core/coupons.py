@@ -88,7 +88,7 @@ def get_summary_message(user_id: int):
     summary_info = get_summary_by_expire_date(user_id)
     if len(summary_info):
         sum_info = '\n'.join([f'{q[0]} талонов сроком до {q[1].strftime("%d/%m/%Y")}' for q in summary_info])
-        return f'<b>Доступно: \n{sum_info}</b>'
+        return f'Доступно: \n{sum_info}'
     else:
-        return '<b>Нет доступных талонов.\n' \
-               'Загрузите новые талоны прикрепив файл.</b>'
+        return 'Нет доступных талонов.\n' \
+               'Загрузите новые талоны прикрепив файл.'
