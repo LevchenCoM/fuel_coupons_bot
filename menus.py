@@ -55,7 +55,7 @@ def create_png_and_send(call, coupon: QRCodeCoupon, bot):
 
     bot.send_photo(
         call.message.chat.id, photo=png.getvalue(), reply_markup=markup,
-        caption=mk_b(f'{mk_u(coupon.coupon_number)}\nДействителен до {coupon.expiry_date.strftime("%d/%m/%Y")}'),
+        caption=mk_b(f'{mk_u(coupon.coupon_number)}\nДействителен до {coupon.expiry_date.strftime("%d/%m/%Y") if coupon.expiry_date else "Неизвестно"}'),
         parse_mode='HTML'
     )
 
