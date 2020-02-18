@@ -38,7 +38,7 @@ def get_all_coupons(call, bot):
 
 def get_summary_coupons_info(call, bot):
     summary_message = get_summary_message(call.message.chat.id)
-    bot.send_message(call.message.chat.id, mk_b(summary_message), reply_markup=start_menu_markup, parse_mode='HTML')
+    bot.send_message(call.message.chat.id, summary_message, reply_markup=start_menu_markup, parse_mode='HTML')
 
 
 def create_png_and_send(call, coupon: QRCodeCoupon, bot):

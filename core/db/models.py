@@ -17,13 +17,15 @@ class QRCodeCoupon(Base):
     used = Column(Boolean)
     last_sent = Column(DateTime)
     created = Column(DateTime, default=datetime.datetime.now)
+    date_used = Column(DateTime)
 
-    def __init__(self, user_id, qr_bytes, coupon_number, expiry_date, used=False, last_sent=None):
+    def __init__(self, user_id, qr_bytes, coupon_number, expiry_date, used=False, last_sent=None, date_used=None):
         self.user_id = user_id
         self.qr_bytes = qr_bytes
         self.coupon_number = coupon_number
         self.expiry_date = expiry_date
         self.used = used
         self.last_sent = last_sent
+        self.date_used = date_used
 
 

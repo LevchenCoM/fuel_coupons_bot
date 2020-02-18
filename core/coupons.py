@@ -1,4 +1,7 @@
+from datetime import datetime
 from typing import List
+
+from tabulate import tabulate
 
 from core.db.db import Session
 from core.db.models import QRCodeCoupon
@@ -63,6 +66,11 @@ def mark_coupon(user_id: int, coupon_number: str, mark: bool):
     session = Session()
     qr_coupon = session.query(QRCodeCoupon).filter_by(user_id=user_id, coupon_number=coupon_number).first()
     qr_coupon.used = mark
+    if mark:
+        qr_coupon.date_used = datetime.now()
+    else:
+        qr_coupon.date_used = None
+
     session.add(qr_coupon)
     session.commit()
     session.close()
@@ -89,8 +97,13 @@ def get_summary_by_expire_date(user_id: int):
 def get_summary_message(user_id: int):
     summary_info = get_summary_by_expire_date(user_id)
     if len(summary_info):
-        sum_info = '\n'.join([f'{q[0]} талонов сроком до {q[1].strftime("%d/%m/%Y") if q[1] else "<u>Неизвестно</u>"}' for q in summary_info])
-        return f'Доступно: \n{sum_info}'
+        sum_rows = []
+        for q in summary_info:
+            date = q[1].strftime("%d/%m/%Y") if q[1] else '<u>N/A</u>'
+            sum_rows.append([q[0], date])
+
+        table_str = str(tabulate(sum_rows, headers=['Кол-во', 'Срок'], tablefmt='psql', colalign=("left", "left")))
+        return f'<code>{table_str}</code>'
     else:
         return 'Нет доступных талонов.\n' \
                'Загрузите новые талоны прикрепив файл.'
