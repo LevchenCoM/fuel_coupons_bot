@@ -39,7 +39,7 @@ def save_coupons(original_image: Image.Image, user_id: int, qr_codes: List):
 def get_unused_coupons(user_id: int):
     session = Session()
     coupons = session.query(QRCodeCoupon).filter_by(user_id=user_id, used=False).order_by(
-        asc(QRCodeCoupon.expiry_date)).all()
+        asc(QRCodeCoupon.expiry_date), asc(QRCodeCoupon.coupon_number)).all()
     session.close()
 
     return coupons
@@ -48,7 +48,7 @@ def get_unused_coupons(user_id: int):
 def get_unused_coupon(user_id: int):
     session = Session()
     qr_coupon = session.query(QRCodeCoupon).filter_by(user_id=user_id, used=False).order_by(
-        asc(QRCodeCoupon.expiry_date)).first()
+        asc(QRCodeCoupon.expiry_date), asc(QRCodeCoupon.coupon_number)).first()
     session.close()
 
     return qr_coupon
